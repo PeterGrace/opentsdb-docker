@@ -1,2 +1,2 @@
 #!/bin/bash
-exec serf join $SERF_1_PORT_7946_TCP_ADDR:$SERF_1_PORT_7946_TCP_PORT
+exec serf join $SERF_PORT_7946_TCP_ADDR:$SERF_PORT_7946_TCP_PORT
