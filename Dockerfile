@@ -10,7 +10,7 @@ RUN mkdir -p /opt/sei-bin/
 RUN mkdir -p /data/hbase
 RUN mkdir -p /root/.profile.d
 WORKDIR /opt
-ADD http://www.apache.org/dist/hbase/stable/hbase-0.94.20.tar.gz /opt/downloads/
+ADD http://apache.org/dist/hbase/hbase-0.94.22/hbase-0.94.22.tar.gz /opt/downloads/
 RUN tar xzvf /opt/downloads/hbase-*gz && rm /opt/downloads/hbase-*gz
 RUN ["/bin/bash","-c","mv hbase-* /opt/hbase"]
 ADD start_hbase.sh /opt/sei-bin/
