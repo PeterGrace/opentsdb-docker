@@ -10,7 +10,7 @@ RUN mkdir -p /opt/sei-bin/
 RUN mkdir -p /data/hbase
 RUN mkdir -p /root/.profile.d
 WORKDIR /opt
-ADD http://www.apache.org/dist/hbase/stable/hbase-0.94.20.tar.gz /opt/downloads/
+ADD http://apache.org/dist/hbase/hbase-0.94.22/hbase-0.94.22.tar.gz /opt/downloads/
 RUN tar xzvf /opt/downloads/hbase-*gz && rm /opt/downloads/hbase-*gz
 RUN ["/bin/bash","-c","mv hbase-* /opt/hbase"]
 ADD start_hbase.sh /opt/sei-bin/
@@ -19,18 +19,14 @@ EXPOSE 60000
 EXPOSE 60010
 EXPOSE 60030
 
-
-
 #Install OpenTSDB and scripts
-RUN rm -Rf /opt/opentsdb && git clone git://github.com/OpenTSDB/opentsdb.git /opt/opentsdb
-ADD patch /opt/opentsdb/patchy
-RUN cd /opt/opentsdb && /bin/cat /opt/opentsdb/patchy |/usr/bin/patch -p1
+RUN git clone -b next --single-branch git://github.com/OpenTSDB/opentsdb.git /opt/opentsdb
 RUN cd /opt/opentsdb && bash ./build.sh
 ADD start_opentsdb.sh /opt/sei-bin/
 ADD create_tsdb_tables.sh /opt/sei-bin/
 EXPOSE 4242
 
-#Install SUpervisord
+#Install Supervisord
 RUN mkdir -p /var/log/supervisor
 ADD supervisor-hbase.conf /etc/supervisor/conf.d/hbase.conf
 ADD supervisor-serf.conf /etc/supervisor/conf.d/serf.conf
