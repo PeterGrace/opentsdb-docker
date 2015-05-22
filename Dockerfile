@@ -51,5 +51,7 @@ RUN mv /opt/downloads/serf /usr/bin
 ADD serf-start.sh /opt/sei-bin/
 ADD serf-join.sh /opt/sei-bin/
 
+VOLUME ["/data/hbase"]
+
 CMD ["/usr/bin/supervisord"]
 
