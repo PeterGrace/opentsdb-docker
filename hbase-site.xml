@@ -3,7 +3,7 @@
 
   <property>
     <name>hbase.rootdir</name>
-    <value>file:////data/hbase/hbase\-${user.name}/hbase</value>
+    <value>file:////data/hbase/hbase${user.name}/hbase</value>
   </property>
   <property>
     <name>hbase.zookeeper.dns.interface</name>
