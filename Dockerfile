@@ -16,7 +16,7 @@ RUN apt-get -y update && apt-get -y upgrade && \
 
 #Install HBase and scripts
 RUN mkdir -p /root/.profile.d
-WORKDIR /opt
+
 # by merging this into one step, the FS layer is going to be smalling. 
 # Moreover since ADD will download the file first and check the complete step will be cached if it was done 
 RUN curl -Ls -o /tmp/hbase-0.94.27.tar.gz http://apache.org/dist/hbase/hbase-0.94.27/hbase-0.94.27.tar.gz && \
@@ -24,15 +24,12 @@ RUN curl -Ls -o /tmp/hbase-0.94.27.tar.gz http://apache.org/dist/hbase/hbase-0.9
    mv hbase-* /opt/hbase
 ADD start_hbase.sh /opt/sei-bin/
 ADD hbase-site.xml /opt/hbase/conf/
-EXPOSE 60000
-EXPOSE 60010
-EXPOSE 60030
+EXPOSE 60000 60010 60030
 
 #Install OpenTSDB and scripts
-RUN git clone -b next --single-branch git://github.com/OpenTSDB/opentsdb.git /opt/opentsdb
-RUN cd /opt/opentsdb && bash ./build.sh
-ADD start_opentsdb.sh /opt/sei-bin/
-ADD create_tsdb_tables.sh /opt/sei-bin/
+RUN git clone -b next --single-branch git://github.com/OpenTSDB/opentsdb.git /opt/opentsdb && \
+    cd /opt/opentsdb && bash ./build.sh
+ADD start_opentsdb.sh create_tsdb_tables.sh /opt/sei-bin/
 EXPOSE 4242
 
 #Install Supervisord
