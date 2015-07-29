@@ -34,7 +34,7 @@ EXPOSE 4242
 
 #Install Supervisord
 RUN mkdir -p /var/log/supervisor
-ADD supervisor/*e.conf /etc/supervisor/conf.d/
+ADD supervisor/*.conf /etc/supervisor/conf.d/
 
 #Configure SSHD properly
 RUN mkdir -p /root/.ssh && chmod 0600 /root/.ssh && \
