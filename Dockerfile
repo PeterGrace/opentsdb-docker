@@ -10,9 +10,11 @@ RUN mkdir -p /opt/sei-bin/
 RUN mkdir -p /data/hbase
 RUN mkdir -p /root/.profile.d
 WORKDIR /opt
-ADD http://apache.org/dist/hbase/hbase-0.94.27/hbase-0.94.27.tar.gz /opt/downloads/
-RUN tar xzvf /opt/downloads/hbase-*gz && rm /opt/downloads/hbase-*gz
-RUN ["/bin/bash","-c","mv hbase-* /opt/hbase"]
+# by merging this into one step, the FS layer is going to be smalling. 
+# Moreover since ADD will download the file first and check the complete step will be cached if it was done 
+RUN curl -Ls -o /tmp/hbase-0.94.27.tar.gz http://apache.org/dist/hbase/hbase-0.94.27/hbase-0.94.27.tar.gz && \
+   tar xzf /tmp/hbase-*gz && rm /tmp/hbase-*gz && \
+   mv hbase-* /opt/hbase
 ADD start_hbase.sh /opt/sei-bin/
 ADD hbase-site.xml /opt/hbase/conf/
 EXPOSE 60000
