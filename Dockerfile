@@ -13,10 +13,8 @@ RUN apt-get -y update && apt-get -y upgrade && \
                        python-dev \
                        supervisor \
                        unzip
-RUN mkdir -p /opt/sei-bin/
 
 #Install HBase and scripts
-RUN mkdir -p /data/hbase
 RUN mkdir -p /root/.profile.d
 WORKDIR /opt
 # by merging this into one step, the FS layer is going to be smalling. 
