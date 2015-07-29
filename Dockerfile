@@ -1,9 +1,18 @@
 #Basic update/upgrade/setup and install packages needed in other sections at once to save on number of apt-get instantiations
 FROM ubuntu
 RUN if [ ! $(grep universe /etc/apt/sources.list) ]; then sed 's/main$/main universe/' -i /etc/apt/sources.list && apt-get update; fi
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y curl build-essential git-core python python-dev openjdk-6-jdk supervisor openssh-server automake gnuplot unzip
+RUN apt-get -y update && apt-get -y upgrade && \
+    apt-get install -y automake \
+                       build-essential \
+                       curl \
+                       git-core \
+                       gnuplot \
+                       openjdk-6-jdk \
+                       openssh-server \
+                       python \
+                       python-dev \
+                       supervisor \
+                       unzip
 RUN mkdir -p /opt/sei-bin/
 
 #Install HBase and scripts
