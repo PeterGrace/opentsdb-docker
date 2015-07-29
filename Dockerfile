@@ -37,22 +37,18 @@ RUN mkdir -p /var/log/supervisor
 ADD supervisor/*e.conf /etc/supervisor/conf.d/
 
 #Configure SSHD properly
-ADD supervisor-sshd.conf /etc/supervisor/conf.d/sshd.conf
-RUN mkdir -p /root/.ssh
-RUN chmod 0600 /root/.ssh
-RUN sed -ri 's/UsePAM yes/#UsePAM yes/g; s/#UsePAM no/UsePAM no/g;' /etc/ssh/sshd_config
-RUN mkdir -p /var/run/sshd
-RUN chown 0:0 /var/run/sshd
-RUN chmod 0744 /var/run/sshd
+RUN mkdir -p /root/.ssh && chmod 0600 /root/.ssh && \
+    sed -ri 's/UsePAM yes/#UsePAM yes/g; s/#UsePAM no/UsePAM no/g;' /etc/ssh/sshd_config && \
+    mkdir -p /var/run/sshd && \
+    chown 0:0 /var/run/sshd && \
+    chmod 0744 /var/run/sshd
 ADD create_ssh_key.sh /opt/sei-bin/
 
 #Install serf and scripts
-ADD https://dl.bintray.com/mitchellh/serf/0.6.1_linux_amd64.zip /opt/downloads/
-WORKDIR /opt/downloads
-RUN ["/bin/bash","-c","unzip 0.6.1_linux_amd64.zip"]
-RUN mv /opt/downloads/serf /usr/bin
-ADD serf-start.sh /opt/sei-bin/
-ADD serf-join.sh /opt/sei-bin/
+RUN curl -Ls -o /tmp/0.6.1_linux_amd64.zip https://dl.bintray.com/mitchellh/serf/0.6.1_linux_amd64.zip && \
+    mkdir /tmp/serf_src/ && cd /tmp/serf_src / && unzip /tmp/0.6.1_linux_amd64.zip && 
+    mv /tmp/serf_src/serf /usr/bin && rm -rf /tmp/0.6.1_linux_amd64.zip /tmp/serf_src/
+ADD serf-start.sh serf-join.sh /opt/sei-bin/
 
 VOLUME ["/data/hbase"]
 
