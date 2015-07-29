@@ -46,7 +46,7 @@ ADD create_ssh_key.sh /opt/sei-bin/
 
 #Install serf and scripts
 RUN curl -Ls -o /tmp/0.6.1_linux_amd64.zip https://dl.bintray.com/mitchellh/serf/0.6.1_linux_amd64.zip && \
-    mkdir /tmp/serf_src/ && cd /tmp/serf_src / && unzip /tmp/0.6.1_linux_amd64.zip && 
+    mkdir /tmp/serf_src/ && cd /tmp/serf_src/ && unzip /tmp/0.6.1_linux_amd64.zip && \
     mv /tmp/serf_src/serf /usr/bin && rm -rf /tmp/0.6.1_linux_amd64.zip /tmp/serf_src/
 ADD serf-start.sh serf-join.sh /opt/sei-bin/
 
