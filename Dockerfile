@@ -34,10 +34,7 @@ EXPOSE 4242
 
 #Install Supervisord
 RUN mkdir -p /var/log/supervisor
-ADD supervisor-hbase.conf /etc/supervisor/conf.d/hbase.conf
-ADD supervisor-serf.conf /etc/supervisor/conf.d/serf.conf
-ADD supervisor-system.conf /etc/supervisor/conf.d/system.conf
-ADD supervisor-tsdb.conf /etc/supervisor/conf.d/tsdb.conf
+ADD supervisor/*e.conf /etc/supervisor/conf.d/
 
 #Configure SSHD properly
 ADD supervisor-sshd.conf /etc/supervisor/conf.d/sshd.conf
