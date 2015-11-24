@@ -20,8 +20,11 @@ EXPOSE 60010
 EXPOSE 60030
 
 #Install OpenTSDB and scripts
-RUN git clone -b next --single-branch git://github.com/OpenTSDB/opentsdb.git /opt/opentsdb
-RUN cd /opt/opentsdb && bash ./build.sh
+ADD https://github.com/OpenTSDB/opentsdb/archive/v2.1.3.zip /opt/opentsdb/
+WORKDIR /opt/opentsdb/ 
+RUN unzip v2.1.3.zip
+WORKDIR /opt/opentsdb/opentsdb-2.1.3
+RUN bash ./build.sh
 ADD start_opentsdb.sh /opt/sei-bin/
 ADD create_tsdb_tables.sh /opt/sei-bin/
 EXPOSE 4242
