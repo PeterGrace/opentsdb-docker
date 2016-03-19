@@ -28,7 +28,7 @@ RUN mkdir -p /data/hbase
 RUN mkdir -p /root/.profile.d
 RUN mkdir -p /opt/downloads
 WORKDIR /opt/downloads
-RUN wget -O hbase-${HBASE_VERSION}.bin.tar.gz http://www-us.apache.org/dist/hbase/1.1.3/hbase-1.1.3-bin.tar.gz && \
+RUN wget -O hbase-${HBASE_VERSION}.bin.tar.gz http://www-us.apache.org/dist/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz && \
     tar xzvf hbase-${HBASE_VERSION}.bin.tar.gz && \
     mv hbase-${HBASE_VERSION} /opt/hbase && \
     rm hbase-${HBASE_VERSION}.bin.tar.gz
