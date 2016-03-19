@@ -1,5 +1,5 @@
 #Basic update/upgrade/setup and install packages needed in other sections at once to save on number of apt-get instantiations
-FROM ubuntu
+FROM ubuntu:trusty
 RUN if [ ! $(grep universe /etc/apt/sources.list) ]; then sed 's/main$/main universe/' -i /etc/apt/sources.list && apt-get update; fi
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y update
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
@@ -20,7 +20,7 @@ EXPOSE 60010
 EXPOSE 60030
 
 #Install OpenTSDB and scripts
-RUN git clone -b next --single-branch git://github.com/OpenTSDB/opentsdb.git /opt/opentsdb
+RUN git clone -b v2.2.0 --single-branch git://github.com/OpenTSDB/opentsdb.git /opt/opentsdb
 RUN cd /opt/opentsdb && bash ./build.sh
 ADD start_opentsdb.sh /opt/sei-bin/
 ADD create_tsdb_tables.sh /opt/sei-bin/
@@ -44,9 +44,9 @@ RUN chmod 0744 /var/run/sshd
 ADD create_ssh_key.sh /opt/sei-bin/
 
 #Install serf and scripts
-ADD https://dl.bintray.com/mitchellh/serf/0.6.1_linux_amd64.zip /opt/downloads/
+ADD https://releases.hashicorp.com/serf/0.6.4/serf_0.6.4_linux_amd64.zip /opt/downloads/serf.zip
 WORKDIR /opt/downloads
-RUN ["/bin/bash","-c","unzip 0.6.1_linux_amd64.zip"]
+RUN ["/bin/bash","-c","unzip serf.zip"]
 RUN mv /opt/downloads/serf /usr/bin
 ADD serf-start.sh /opt/sei-bin/
 ADD serf-join.sh /opt/sei-bin/
