@@ -3,8 +3,9 @@
 
 export COMPRESSION="NONE"
 export HBASE_HOME=/opt/hbase
-export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64
+export TSDB_VERSION="::TSDB_VERSION::"
+export JAVA_HOME="::JAVA_HOME::"
 
-cd /opt/opentsdb
+cd /opt/opentsdb/opentsdb-${TSDB_VERSION}/
 ./src/create_table.sh
 touch /opt/opentsdb_tables_created.txt

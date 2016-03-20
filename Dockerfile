@@ -1,57 +1,54 @@
-#Basic update/upgrade/setup and install packages needed in other sections at once to save on number of apt-get instantiations
-FROM ubuntu
-RUN if [ ! $(grep universe /etc/apt/sources.list) ]; then sed 's/main$/main universe/' -i /etc/apt/sources.list && apt-get update; fi
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y curl build-essential git-core python python-dev openjdk-6-jdk supervisor openssh-server automake gnuplot unzip
-RUN mkdir -p /opt/sei-bin/
+FROM janeczku/alpine-kubernetes:3.2
+
+RUN apk --update add rsyslog bash openjdk7 make wget
+
+RUN apk --update add --virtual builddeps build-base autoconf automake git python
+
+ENV TSDB_VERSION 2.2.0
+ENV HBASE_VERSION 1.1.3
+ENV JAVA_HOME /usr/lib/jvm/java-1.7-openjdk
+ENV PATH $PATH:/usr/lib/jvm/java-1.7-openjdk/bin/
+
+RUN mkdir -p /opt/bin/
+
+RUN mkdir /opt/opentsdb/
+WORKDIR /opt/opentsdb/
+#Install OpenTSDB and scripts
+RUN wget --no-check-certificate -O v${TSDB_VERSION}.zip https://github.com/OpenTSDB/opentsdb/archive/v${TSDB_VERSION}.zip && \
+    unzip v${TSDB_VERSION}.zip && \
+    rm v${TSDB_VERSION}.zip
+WORKDIR /opt/opentsdb/opentsdb-${TSDB_VERSION}
+RUN ./build.sh
+
+RUN apk del builddeps && rm -rf /var/cache/apk/*
+
 
 #Install HBase and scripts
 RUN mkdir -p /data/hbase
 RUN mkdir -p /root/.profile.d
-WORKDIR /opt
-ADD http://apache.org/dist/hbase/hbase-0.94.27/hbase-0.94.27.tar.gz /opt/downloads/
-RUN tar xzvf /opt/downloads/hbase-*gz && rm /opt/downloads/hbase-*gz
-RUN ["/bin/bash","-c","mv hbase-* /opt/hbase"]
-ADD start_hbase.sh /opt/sei-bin/
-ADD hbase-site.xml /opt/hbase/conf/
-EXPOSE 60000
-EXPOSE 60010
-EXPOSE 60030
-
-#Install OpenTSDB and scripts
-RUN git clone -b next --single-branch git://github.com/OpenTSDB/opentsdb.git /opt/opentsdb
-RUN cd /opt/opentsdb && bash ./build.sh
-ADD start_opentsdb.sh /opt/sei-bin/
-ADD create_tsdb_tables.sh /opt/sei-bin/
-EXPOSE 4242
-
-#Install Supervisord
-RUN mkdir -p /var/log/supervisor
-ADD supervisor-hbase.conf /etc/supervisor/conf.d/hbase.conf
-ADD supervisor-serf.conf /etc/supervisor/conf.d/serf.conf
-ADD supervisor-system.conf /etc/supervisor/conf.d/system.conf
-ADD supervisor-tsdb.conf /etc/supervisor/conf.d/tsdb.conf
-
-#Configure SSHD properly
-ADD supervisor-sshd.conf /etc/supervisor/conf.d/sshd.conf
-RUN mkdir -p /root/.ssh
-RUN chmod 0600 /root/.ssh
-RUN sed -ri 's/UsePAM yes/#UsePAM yes/g; s/#UsePAM no/UsePAM no/g;' /etc/ssh/sshd_config
-RUN mkdir -p /var/run/sshd
-RUN chown 0:0 /var/run/sshd
-RUN chmod 0744 /var/run/sshd
-ADD create_ssh_key.sh /opt/sei-bin/
-
-#Install serf and scripts
-ADD https://dl.bintray.com/mitchellh/serf/0.6.1_linux_amd64.zip /opt/downloads/
+RUN mkdir -p /opt/downloads
 WORKDIR /opt/downloads
-RUN ["/bin/bash","-c","unzip 0.6.1_linux_amd64.zip"]
-RUN mv /opt/downloads/serf /usr/bin
-ADD serf-start.sh /opt/sei-bin/
-ADD serf-join.sh /opt/sei-bin/
+RUN wget -O hbase-${HBASE_VERSION}.bin.tar.gz http://www-us.apache.org/dist/hbase/1.1.3/hbase-1.1.3-bin.tar.gz && \
+    tar xzvf hbase-${HBASE_VERSION}.bin.tar.gz && \
+    mv hbase-${HBASE_VERSION} /opt/hbase && \
+    rm hbase-${HBASE_VERSION}.bin.tar.gz
+
+ADD docker/hbase-site.xml /opt/hbase/conf/
+ADD docker/start_opentsdb.sh /opt/bin/
+ADD docker/create_tsdb_tables.sh /opt/bin/
+ADD docker/start_hbase.sh /opt/bin/
+
+RUN for i in /opt/bin/start_hbase.sh /opt/bin/start_opentsdb.sh /opt/bin/create_tsdb_tables.sh; \
+    do \
+        sed -i "s#::JAVA_HOME::#$JAVA_HOME#g; s#::PATH::#$PATH#g; s#::TSDB_VERSION::#$TSDB_VERSION#g;" $i; \
+    done
+
+
+RUN mkdir -p /etc/services.d/hbase /etc/services.d/tsdb
+RUN ln -s /opt/bin/start_hbase.sh /etc/services.d/hbase/run
+RUN ln -s /opt/bin/start_opentsdb.sh /etc/services.d/tsdb/run
+
+
+EXPOSE 60000 60010 60030 4242 16010
 
 VOLUME ["/data/hbase"]
-
-CMD ["/usr/bin/supervisord"]
-
