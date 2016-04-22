@@ -2,7 +2,7 @@ FROM ubuntu
 
 RUN apt-get -yq update
 
-RUN apt-get -yq install make wget autoconf default-jdk unzip
+RUN apt-get -yq install make wget autoconf default-jdk unzip gnuplot
 
 
 #RUN apk --update add rsyslog bash openjdk7 make wget unzip
@@ -42,6 +42,7 @@ ADD docker/hbase-site.xml /opt/hbase/conf/
 ADD docker/start_opentsdb.sh /opt/bin/
 ADD docker/create_tsdb_tables.sh /opt/bin/
 ADD docker/start_hbase.sh /opt/bin/
+ADD docker/.gnuplot /root
 #
 RUN for i in /opt/bin/start_hbase.sh /opt/bin/start_opentsdb.sh /opt/bin/create_tsdb_tables.sh; \
     do \
@@ -57,3 +58,7 @@ RUN ln -s /opt/bin/start_opentsdb.sh /etc/services.d/tsdb/run
 EXPOSE 60000 60010 60030 4242 16010
 
 VOLUME ["/data/hbase"]
+
+CMD /opt/bin/start_hbase.sh & /opt/bin/start_opentsdb.sh
+
+#CMD /opt/bin/start_opentsdb.sh 
