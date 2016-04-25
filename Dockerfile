@@ -41,7 +41,6 @@ ADD docker/hbase-site.xml /opt/hbase/conf/
 ADD docker/start_opentsdb.sh /opt/bin/
 ADD docker/create_tsdb_tables.sh /opt/bin/
 ADD docker/start_hbase.sh /opt/bin/
-ADD docker/.gnuplot /root
 
 RUN for i in /opt/bin/start_hbase.sh /opt/bin/start_opentsdb.sh /opt/bin/create_tsdb_tables.sh; \
     do \
@@ -57,4 +56,4 @@ EXPOSE 60000 60010 60030 4242 16010
 
 VOLUME ["/data/hbase"]
 
-CMD /opt/bin/start_hbase.sh & /opt/bin/start_opentsdb.sh
+ENTRYPOINT /opt/bin/start_hbase.sh & /opt/bin/start_opentsdb.sh
