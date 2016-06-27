@@ -11,8 +11,8 @@ RUN apk --update add \
     --update-cache \
     --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
 
-ENV TSDB_VERSION 2.2.0
-ENV HBASE_VERSION 1.1.3
+ENV TSDB_VERSION 2.3.0RC1
+ENV HBASE_VERSION 1.2.1
 ENV JAVA_HOME /usr/lib/jvm/java-1.7-openjdk
 ENV PATH $PATH:/usr/lib/jvm/java-1.7-openjdk/bin/
 
