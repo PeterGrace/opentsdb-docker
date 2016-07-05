@@ -10,4 +10,4 @@ if [ ! -e /opt/opentsdb_tables_created.txt ]; then
 fi
 
 echo "starting opentsdb"
-/opt/opentsdb/opentsdb-${TSDB_VERSION}/build/tsdb tsd --port=4242 --staticroot=/opt/opentsdb/opentsdb-${TSDB_VERSION}/build/staticroot --cachedir=/tmp --auto-metric
+/opt/opentsdb/opentsdb-${TSDB_VERSION}/build/tsdb tsd --port=4242 --staticroot=/opt/opentsdb/opentsdb-${TSDB_VERSION}/build/staticroot --cachedir=/tmp --auto-metric --config=/opt/opentsdb.conf

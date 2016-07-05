@@ -33,8 +33,6 @@ RUN apk --update add --virtual builddeps \
   && unzip v${TSDB_VERSION}.zip \
   && rm v${TSDB_VERSION}.zip \
   && cd /opt/opentsdb/opentsdb-${TSDB_VERSION} \
-  && echo "tsd.http.request.enable_chunked = true" >> src/opentsdb.conf \
-  && echo "tsd.http.request.max_chunk = 1000000" >> src/opentsdb.conf \
   && ./build.sh \
   && : because of issue https://github.com/OpenTSDB/opentsdb/issues/707 \
   && : commented lines do not work. These can be uncommeted when version of \
@@ -50,7 +48,7 @@ RUN apk --update add --virtual builddeps \
 RUN mkdir -p /data/hbase /root/.profile.d /opt/downloads
 
 WORKDIR /opt/downloads
-RUN wget -O hbase-${HBASE_VERSION}.bin.tar.gz http://archive.apache.org/dist/hbase/1.1.3/hbase-1.1.3-bin.tar.gz && \
+RUN wget -O hbase-${HBASE_VERSION}.bin.tar.gz http://archive.apache.org/dist/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz && \
     tar xzvf hbase-${HBASE_VERSION}.bin.tar.gz && \
     mv hbase-${HBASE_VERSION} /opt/hbase && \
     rm hbase-${HBASE_VERSION}.bin.tar.gz
@@ -59,6 +57,7 @@ ADD docker/hbase-site.xml /opt/hbase/conf/
 ADD docker/start_opentsdb.sh /opt/bin/
 ADD docker/create_tsdb_tables.sh /opt/bin/
 ADD docker/start_hbase.sh /opt/bin/
+ADD docker/opentsdb.conf /opt/opentsdb.conf
 
 RUN for i in /opt/bin/start_hbase.sh /opt/bin/start_opentsdb.sh /opt/bin/create_tsdb_tables.sh; \
     do \
