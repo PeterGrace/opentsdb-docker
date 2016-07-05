@@ -12,7 +12,7 @@ RUN apk --update add \
     --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
 
 ENV TSDB_VERSION 2.3.0RC1
-ENV HBASE_VERSION 1.2.1
+ENV HBASE_VERSION 1.1.3
 ENV JAVA_HOME /usr/lib/jvm/java-1.7-openjdk
 ENV PATH $PATH:/usr/lib/jvm/java-1.7-openjdk/bin/
 
@@ -33,8 +33,6 @@ RUN apk --update add --virtual builddeps \
   && unzip v${TSDB_VERSION}.zip \
   && rm v${TSDB_VERSION}.zip \
   && cd /opt/opentsdb/opentsdb-${TSDB_VERSION} \
-  && echo "tsd.http.request.enable_chunked = true" >> src/opentsdb.conf \
-  && echo "tsd.http.request.max_chunk = 1000000" >> src/opentsdb.conf \
   && ./build.sh \
   && : because of issue https://github.com/OpenTSDB/opentsdb/issues/707 \
   && : commented lines do not work. These can be uncommeted when version of \
@@ -59,6 +57,7 @@ ADD docker/hbase-site.xml /opt/hbase/conf/
 ADD docker/start_opentsdb.sh /opt/bin/
 ADD docker/create_tsdb_tables.sh /opt/bin/
 ADD docker/start_hbase.sh /opt/bin/
+ADD docker/opentsdb.conf /opt/opentsdb.conf
 
 RUN for i in /opt/bin/start_hbase.sh /opt/bin/start_opentsdb.sh /opt/bin/create_tsdb_tables.sh; \
     do \
