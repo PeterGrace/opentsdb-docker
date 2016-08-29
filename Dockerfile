@@ -27,10 +27,7 @@ RUN apk --update add --virtual builddeps \
     git \
     python \
   && : Install OpenTSDB and scripts \
-  && curl -k -L -s -o v${TSDB_VERSION}.tar.gz \
-    https://github.com/OpenTSDB/opentsdb/archive/v${TSDB_VERSION}.tar.gz \
-  && tar xzf v${TSDB_VERSION}.tar.gz \
-  && rm v${TSDB_VERSION}.tar.gz \
+  && curl -k -L -s -o - https://github.com/OpenTSDB/opentsdb/archive/v${TSDB_VERSION}.tar.gz | tar xzf - \
   && cd /opt/opentsdb/opentsdb-${TSDB_VERSION} \
   && ./build.sh \
   && : because of issue https://github.com/OpenTSDB/opentsdb/issues/707 \
@@ -47,11 +44,9 @@ RUN apk --update add --virtual builddeps \
 RUN mkdir -p /data/hbase /root/.profile.d /opt/downloads
 
 WORKDIR /opt/downloads
-RUN curl -s -o hbase-${HBASE_VERSION}.bin.tar.gz \
-    http://archive.apache.org/dist/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz \
-  && tar xzf hbase-${HBASE_VERSION}.bin.tar.gz \
-  && mv hbase-${HBASE_VERSION} /opt/hbase \
-  && rm hbase-${HBASE_VERSION}.bin.tar.gz
+RUN curl -s -o - \
+    http://archive.apache.org/dist/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz | tar xzf - \
+  && mv hbase-${HBASE_VERSION} /opt/hbase
 
 ADD docker/hbase-site.xml /opt/hbase/conf/
 ADD docker/start_opentsdb.sh /opt/bin/
