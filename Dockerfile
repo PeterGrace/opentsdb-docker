@@ -45,7 +45,7 @@ RUN mkdir -p /data/hbase /root/.profile.d /opt/downloads
 
 WORKDIR /opt/downloads
 RUN curl -s -o - \
-    http://archive.apache.org/dist/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz | tar xzf - \
+    http://archive.apache.org/dist/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz | tar xzf - --exclude=docs \
   && mv hbase-${HBASE_VERSION} /opt/hbase
 
 ADD docker/hbase-site.xml /opt/hbase/conf/
