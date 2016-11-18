@@ -9,7 +9,7 @@ RUN apk --update add \
   && : adding gnuplot for graphing \
   && apk add gnuplot \
     --update-cache \
-    --repository http://mirror.leaseweb.com/alpine/edge/testing/
+    --repository http://mirror.leaseweb.com/alpine/edge/community/
 
 ENV TSDB_VERSION 2.3.0RC1
 ENV HBASE_VERSION 1.2.1
