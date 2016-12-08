@@ -60,7 +60,7 @@ ADD docker/start_hbase.sh /opt/bin/
 
 # add additional config
 RUN mkdir /opt/opentsdb/config
-ADD opentsdb.conf
+ADD opentsdb.conf /opt/opentsdb/config
 
 RUN for i in /opt/bin/start_hbase.sh /opt/bin/start_opentsdb.sh /opt/bin/create_tsdb_tables.sh; \
     do \
