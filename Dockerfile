@@ -58,6 +58,10 @@ ADD docker/start_opentsdb.sh /opt/bin/
 ADD docker/create_tsdb_tables.sh /opt/bin/
 ADD docker/start_hbase.sh /opt/bin/
 
+# add additional config
+RUN mkdir /opt/opentsdb/config
+ADD opentsdb.conf
+
 RUN for i in /opt/bin/start_hbase.sh /opt/bin/start_opentsdb.sh /opt/bin/create_tsdb_tables.sh; \
     do \
         sed -i "s#::JAVA_HOME::#$JAVA_HOME#g; s#::PATH::#$PATH#g; s#::TSDB_VERSION::#$TSDB_VERSION#g;" $i; \
