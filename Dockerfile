@@ -9,9 +9,9 @@ RUN apk --update add \
   && : adding gnuplot for graphing \
   && apk add gnuplot \
     --update-cache \
-    --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
+    --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/
 
-ENV TSDB_VERSION 2.2.0
+ENV TSDB_VERSION 2.3.0
 ENV HBASE_VERSION 1.1.3
 ENV JAVA_HOME /usr/lib/jvm/java-1.7-openjdk
 ENV PATH $PATH:/usr/lib/jvm/java-1.7-openjdk/bin/
@@ -48,7 +48,7 @@ RUN apk --update add --virtual builddeps \
 RUN mkdir -p /data/hbase /root/.profile.d /opt/downloads
 
 WORKDIR /opt/downloads
-RUN wget -O hbase-${HBASE_VERSION}.bin.tar.gz http://archive.apache.org/dist/hbase/1.1.3/hbase-1.1.3-bin.tar.gz && \
+RUN wget -O hbase-${HBASE_VERSION}.bin.tar.gz http://archive.apache.org/dist/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz && \
     tar xzvf hbase-${HBASE_VERSION}.bin.tar.gz && \
     mv hbase-${HBASE_VERSION} /opt/hbase && \
     rm hbase-${HBASE_VERSION}.bin.tar.gz
