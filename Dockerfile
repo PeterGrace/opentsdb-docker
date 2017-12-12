@@ -33,6 +33,8 @@ RUN apk --update add --virtual builddeps \
   && unzip v${TSDB_VERSION}.zip \
   && rm v${TSDB_VERSION}.zip \
   && cd /opt/opentsdb/opentsdb-${TSDB_VERSION} \
+  && echo "tsd.http.request.enable_chunked = true" >> src/opentsdb.conf \
+  && echo "tsd.http.request.max_chunk = 1000000" >> src/opentsdb.conf \
   && ./build.sh \
   && : because of issue https://github.com/OpenTSDB/opentsdb/issues/707 \
   && : commented lines do not work. These can be uncommeted when version of \
