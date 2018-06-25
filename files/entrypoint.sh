@@ -4,8 +4,9 @@
 cleanup()
 {
     echo "SIGTERM received, trying to gracefully shutdown."
-    killall tsdb
-    /opt/hbase/bin/hbase_stop.sh
+    echo "diediedie" | nc localhost 4242
+    sleep 2
+    /opt/hbase/bin/stop-hbase.sh
 }
 trap cleanup TERM
 
@@ -29,4 +30,9 @@ sleep ${WAITSECS}
 touch /data/hbase/hbase_started
 
 echo "Starting opentsdb.  It should be available on port 4242 momentarily."
-/opt/bin/start_opentsdb.sh
+/opt/bin/start_opentsdb.sh &
+
+while [ 1 ]
+do
+    sleep 1
+done

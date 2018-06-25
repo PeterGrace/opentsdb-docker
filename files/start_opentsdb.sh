@@ -1,7 +1,10 @@
 #!/bin/bash
 export TSDB_VERSION="::TSDB_VERSION::"
 
-if [ ! -e /opt/opentsdb_tables_created.txt ]; then
+echo "listing /data/hbase"
+ls -lhat /data/hbase
+
+if [ ! -e /data/hbase/opentsdb_tables_created.txt ]; then
 	echo "creating tsdb tables"
 	bash /opt/bin/create_tsdb_tables.sh
 	echo "created tsdb tables"
