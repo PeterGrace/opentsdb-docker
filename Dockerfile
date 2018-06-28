@@ -46,10 +46,11 @@ RUN apk add --virtual builddeps \
 #Install HBase and scripts
 RUN mkdir -p /data/hbase /root/.profile.d /opt/downloads
 WORKDIR /opt/downloads
-RUN wget -O hbase-${HBASE_VERSION}.bin.tar.gz http://archive.apache.org/dist/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz && \
-    tar xzvf hbase-${HBASE_VERSION}.bin.tar.gz && \
-    mv hbase-${HBASE_VERSION} /opt/hbase && \
-    rm hbase-${HBASE_VERSION}.bin.tar.gz
+RUN wget -O hbase-${HBASE_VERSION}.bin.tar.gz http://archive.apache.org/dist/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz \
+    && tar xzvf hbase-${HBASE_VERSION}.bin.tar.gz \
+    && mv hbase-${HBASE_VERSION} /opt/hbase \
+    && rm -r /opt/hbase/docs \
+    && rm hbase-${HBASE_VERSION}.bin.tar.gz
 
 # Add misc startup files
 RUN ln -s /usr/local/share/opentsdb/etc/opentsdb /etc/opentsdb \
