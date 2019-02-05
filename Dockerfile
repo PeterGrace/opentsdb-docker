@@ -3,10 +3,11 @@ FROM alpine:latest
 ENV TINI_VERSION v0.18.0
 ENV TSDB_VERSION 2.3.1
 ENV HBASE_VERSION 1.4.4
+ENV GNUPLOT_VERSION 5.2.4
 ENV JAVA_HOME /usr/lib/jvm/java-1.7-openjdk
 ENV PATH $PATH:/usr/lib/jvm/java-1.7-openjdk/bin/
-ENV ALPINE_PACKAGES "rsyslog bash openjdk7 make wget gnuplot"
-ENV BUILD_PACKAGES "build-base autoconf automake git python"
+ENV ALPINE_PACKAGES "rsyslog bash openjdk7 make wget libgd libpng libjpeg libwebp libjpeg-turbo cairo pango lua"
+ENV BUILD_PACKAGES "build-base autoconf automake git python cairo-dev pango-dev gd-dev lua-dev readline-dev libpng-dev libjpeg-turbo-dev libwebp-dev"
 
 # Tini is a tiny init that helps when a container is being culled to stop things nicely
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-amd64 /tini
@@ -39,9 +40,17 @@ RUN apk add --virtual builddeps \
   && cd build \
   && make install \
   && cd / \
-  && rm -rf /opt/opentsdb/opentsdb-${TSDB_VERSION} \
-  && apk del builddeps \
-  && rm -rf /var/cache/apk/*
+  && rm -rf /opt/opentsdb/opentsdb-${TSDB_VERSION}
+
+RUN cd /tmp && \
+	wget https://datapacket.dl.sourceforge.net/project/gnuplot/gnuplot/${GNUPLOT_VERSION}/gnuplot-${GNUPLOT_VERSION}.tar.gz && \
+	tar xzf gnuplot-${GNUPLOT_VERSION}.tar.gz && \
+	cd gnuplot-${GNUPLOT_VERSION} && \
+	./configure && \
+	make install && \
+	cd /tmp && rm -rf /tmp/gnuplot-${GNUPLOT_VERSION} && rm /tmp/gnuplot-${GNUPLOT_VERSION}.tar.gz  
+
+RUN apk del builddeps && rm -rf /var/cache/apk/*
 
 #Install HBase and scripts
 RUN mkdir -p /data/hbase /root/.profile.d /opt/downloads
