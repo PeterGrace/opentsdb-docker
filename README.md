@@ -17,10 +17,10 @@ Use the supplied docker-compose.yml file to start the container.  Data will be p
 
 `docker-compose up -d`
 
-**NOTE: When stopping the container, please use the -t option to give more time for hbase to shutdown, 
-otherwise data corruption may result.  At least 30 seconds is suggested.**
+**NOTE: Stop timeout is increased to 5 min, to avoid possible data corruption. 
+This timeout can be change by STOP_GRACE_PERIOD environment variable for docker-compose or in `.env` file.**
 
-Example: `docker-compose stop -t 30`
+Example in bash: `STOP_GRACE_PERIOD=10m docker-compose up -d`
 
 ### I want to use my own opentsdb.conf file!
 You can volume-mount it into the docker container at /etc/opentsdb/opentsdb.conf.  If entrypoint.sh 
