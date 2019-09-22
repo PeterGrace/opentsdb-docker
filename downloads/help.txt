@@ -1,0 +1,3 @@
+cd /opt/downloads/201812
+for f in *.tsdb; do /usr/local/bin/tsdb import $f; done
+tsdb uid metasync
