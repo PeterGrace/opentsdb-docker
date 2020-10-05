@@ -10,7 +10,7 @@ cleanup()
 }
 trap cleanup TERM
 
-if [ ! -f "/etc/opentsdb.conf" ]
+if [ ! -f "/etc/opentsdb/opentsdb.conf" ]
 then
     echo "OpenTSDB config not imported, using defaults."
     cp /etc/opentsdb/opentsdb.conf.sample /etc/opentsdb/opentsdb.conf
