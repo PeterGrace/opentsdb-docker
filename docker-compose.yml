@@ -1,21 +1,11 @@
-version: "3.7"
-services:
-  opentsdb:
-    image: opentsdb:2.4.0
-    build:
-      context: .
-    restart: always
-    hostname: opentsdb
-    environment:
-      - WAITSECS=30
-    ports:
-      - 4242:4242
-      - 60030:60030
-    volumes:
-      - type: bind
-        source: ./confs/opentsdb/data
-        target: /data/hbase
-      - type: bind
-        source: ./confs/opentsdb/opentsdb.conf
-        target: /etc/opentsdb/opentsdb.conf
-
+---
+opentsdb:
+  hostname: otsdb-host
+  image: petergrace/opentsdb-docker:latest
+  environment:
+    - WAITSECS=30    
+  ports:
+    - 4242:4242
+    - 60030:60030
+  volumes:  
+    - "./data:/data/hbase"
