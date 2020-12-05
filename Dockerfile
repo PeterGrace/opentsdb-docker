@@ -1,13 +1,13 @@
 FROM alpine:latest
 
 ENV TINI_VERSION v0.18.0
-ENV TSDB_VERSION 2.3.1
+ENV TSDB_VERSION 2.4.0
 ENV HBASE_VERSION 1.4.4
 ENV GNUPLOT_VERSION 5.2.4
 ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
 ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/bin/
 ENV ALPINE_PACKAGES "rsyslog bash openjdk8 make wget libgd libpng libjpeg libwebp libjpeg-turbo cairo pango lua"
-ENV BUILD_PACKAGES "build-base autoconf automake git python cairo-dev pango-dev gd-dev lua-dev readline-dev libpng-dev libjpeg-turbo-dev libwebp-dev"
+ENV BUILD_PACKAGES "build-base autoconf automake git python3-dev cairo-dev pango-dev gd-dev lua-dev readline-dev libpng-dev libjpeg-turbo-dev libwebp-dev sed"
 ENV HBASE_OPTS "-XX:+UseConcMarkSweepGC -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
 ENV JVMARGS "-XX:+UseConcMarkSweepGC -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -enableassertions -enablesystemassertions"
 
@@ -26,17 +26,22 @@ RUN apk --update add apk-tools \
 WORKDIR /opt/opentsdb/
 
 # Add build deps, build opentsdb, and clean up afterwards.
-RUN apk add --virtual builddeps \
-    ${BUILD_PACKAGES} \
-  && : Install OpenTSDB and scripts \
-  && wget --no-check-certificate \
+RUN set -ex && apk add --virtual builddeps ${BUILD_PACKAGES}
+
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
+RUN wget --no-check-certificate \
     -O v${TSDB_VERSION}.zip \
     https://github.com/OpenTSDB/opentsdb/archive/v${TSDB_VERSION}.zip \
   && unzip v${TSDB_VERSION}.zip \
   && rm v${TSDB_VERSION}.zip \
   && cd /opt/opentsdb/opentsdb-${TSDB_VERSION} \
   && echo "tsd.http.request.enable_chunked = true" >> src/opentsdb.conf \
-  && echo "tsd.http.request.max_chunk = 1000000" >> src/opentsdb.conf \
+  && echo "tsd.http.request.max_chunk = 1000000" >> src/opentsdb.conf 
+
+RUN cd /opt/opentsdb/opentsdb-${TSDB_VERSION} \
+  && find . | xargs grep -s central.maven.org | cut -f1 -d : | xargs sed -i "s/http:\/\/central/https:\/\/repo1/g" \
+  && find . | xargs grep -s repo1.maven.org | cut -f1 -d : | xargs sed -i "s/http:\/\/repo1/https:\/\/repo1/g" \
   && ./build.sh \
   && cp build-aux/install-sh build/build-aux \
   && cd build \
@@ -45,7 +50,7 @@ RUN apk add --virtual builddeps \
   && rm -rf /opt/opentsdb/opentsdb-${TSDB_VERSION}
 
 RUN cd /tmp && \
-    wget https://datapacket.dl.sourceforge.net/project/gnuplot/gnuplot/${GNUPLOT_VERSION}/gnuplot-${GNUPLOT_VERSION}.tar.gz && \
+    wget https://sourceforge.net/projects/gnuplot/files/gnuplot/${GNUPLOT_VERSION}/gnuplot-${GNUPLOT_VERSION}.tar.gz && \
     tar xzf gnuplot-${GNUPLOT_VERSION}.tar.gz && \
     cd gnuplot-${GNUPLOT_VERSION} && \
     ./configure && \
