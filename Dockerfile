@@ -1,7 +1,7 @@
 FROM alpine:latest
 
 ENV TINI_VERSION v0.18.0
-ENV TSDB_VERSION 2.4.0
+ENV TSDB_VERSION 2.4.1
 ENV HBASE_VERSION 1.4.4
 ENV GNUPLOT_VERSION 5.2.4
 ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
@@ -40,8 +40,6 @@ RUN wget --no-check-certificate \
   && echo "tsd.http.request.max_chunk = 1000000" >> src/opentsdb.conf 
 
 RUN cd /opt/opentsdb/opentsdb-${TSDB_VERSION} \
-  && find . | xargs grep -s central.maven.org | cut -f1 -d : | xargs sed -i "s/http:\/\/central/https:\/\/repo1/g" \
-  && find . | xargs grep -s repo1.maven.org | cut -f1 -d : | xargs sed -i "s/http:\/\/repo1/https:\/\/repo1/g" \
   && ./build.sh \
   && cp build-aux/install-sh build/build-aux \
   && cd build \
