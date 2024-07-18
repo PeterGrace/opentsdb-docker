@@ -1,3 +1,8 @@
+# THIS PROJECT IS NOW ARCHIVED
+This project was relevant early on in the progression of opentsdb and bosun development but it is now arguable
+that this docker container could be done in many better ways.  I'm archiving for posterity's sake but no new 
+attention will be delivered to this repository.  Thanks everyone for your issues, PRs, and encouragement!
+
 # opentsdb-docker
 
 Files required to make a trusted opentsdb Docker such that opentsdb can be used for other projects (e.g. scollector, bosun)
